@@ -1,0 +1,22 @@
+{
+  "name": "potato",
+  "version": "0.0.1",
+  "description": "Tiny utility to steal food.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hungrilla/potato.git"
+  },
+  "author": "Umayr Shahid <umayrr@hotmail.co.uk>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hungrilla/potato/issues"
+  },
+  "homepage": "https://github.com/hungrilla/potato#readme",
+  "dependencies": {
+    "sequelize": "^3.1.1"
+  }
+}
