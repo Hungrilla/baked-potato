@@ -6,7 +6,6 @@
 'use strict';
 
 var chalk = require('chalk');
-var Promise = require('bluebird');
 
 var url = require('./url');
 var request = require('./request');
@@ -76,5 +75,5 @@ function listing(page) {
  */
 function handler(error, type, url) {
   var message = chalk.red('Failed to fetch [{0}]: `{1}`').replace('{0}', type).replace('{1}', url);
-  console.log(message)
+  console.log(message);
 }
