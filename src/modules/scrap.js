@@ -32,6 +32,7 @@ function restaurant(item) {
     var $item = cheerio.load(item);
 
     var url = $item('.item-pic > a').attr('href');
+    var img = $item('.item-pic > a > img').attr('src');
     var name = $item('.item-details > .item-title > a').text();
     var rating = $item('.item-details > .item-title > span').data('rating');
     var type = $item('.item-details > .item-meta > .item-address').text();
@@ -39,6 +40,7 @@ function restaurant(item) {
 
     return _restaurant.insert({
         url: url,
+        img: img,
         name: name,
         rating: rating,
         type: type
