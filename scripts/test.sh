@@ -10,8 +10,4 @@ CYAN='\033[0;36m';
 
 # Verifying codebase.
 printf "\n\r${CYAN}Verifying source using JSHint & JSCS.${COLOR_OFF}\n\r";
-grunt verify;
-
-printf "\n\r${CYAN}Executing script for unit tests.${COLOR_OFF}";
-# TODO: Add commands to execute unit tests and remove the line below.
-printf "\n\r${RED}Currently there is no script for unit tests.${COLOR_OFF}\n\r";
+grunt verify --verbose;
