@@ -13,22 +13,13 @@ var fetcher = require('./modules/fetch');
 var start = Date.now();
 var MAX_PAGE_SIZE = 3; // TODO: Do we need a whole constant file for this? pfft.
 
-// uncomment the line below to fetch a clean copy.
+// comment the line below to update the entries instead of fetching a clean copy.
 clean();
 
-var promises = [];
+var queue = makeQueue();
 
-for (var i = 0; i <= MAX_PAGE_SIZE; i++) {
-  // Let the race begin.
-  promises.push(fetcher.listing(i));
-}
-
-// TODO: This doesn't work properly. Need a fix.
-// This should run in the end, but due to the heavy usage of `http request`; promises aren't working as they should.
-// Maybe, I'm wrong but there has to be a way.
-
-Promise.all(promises)
-  .then(function () {
+Promise.all(queue)
+  .spread(function () {
     console.log(chalk.green('Completed without errors!'));
     result();
   }, function () {
@@ -53,4 +44,17 @@ function clean() {
 function result() {
   var end = Date.now();
   console.log(chalk.yellow('Time Consumed: ') + chalk.bold(end - start + 'ms'));
+}
+
+/**
+ * Generates a queue of all pages that needs to be fetched.
+ *
+ * @returns {Array}
+ */
+function makeQueue() {
+  var q = [];
+  for (var i = 0; i <= MAX_PAGE_SIZE; i++) {
+    q.push(fetcher.listing(i));
+  }
+  return q;
 }
