@@ -5,8 +5,6 @@
 
 'use strict';
 
-var Promise = require('bluebird');
-
 var url = require('./url');
 var request = require('./request');
 var scrap = require('./scrap');

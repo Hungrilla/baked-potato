@@ -3,22 +3,24 @@
  * Created: 23:49, 05/06/15.
  */
 
+'use strict';
+
 var Promise = require('bluebird');
 var chalk = require('chalk');
 
-var fetch = require('./modules/fetch');
+var fetcher = require('./modules/fetch');
 
 var start = Date.now();
 var MAX_PAGE_SIZE = 3; // TODO: Do we need a whole constant file for this? pfft.
 
 // uncomment the line below to fetch a clean copy.
-// clean();
+clean();
 
 var promises = [];
 
 for (var i = 0; i <= MAX_PAGE_SIZE; i++) {
   // Let the race begin.
-  promises.push(fetch.listing(i));
+  promises.push(fetcher.listing(i));
 }
 
 // TODO: This doesn't work properly. Need a fix.
