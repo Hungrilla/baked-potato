@@ -4,7 +4,8 @@
   "description": "Tiny utility to steal food.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./scripts/test.sh",
+    "start": "node ./src/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,5 +24,13 @@
     "mysql": "^2.6.2",
     "request-promise": "^0.4.2",
     "sequelize": "^3.1.1"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-jscs": "^1.8.0",
+    "grunt-timer": "^0.6.0",
+    "jshint-stylish": "^2.0.1",
+    "nodemon": "^1.3.7"
   }
 }
