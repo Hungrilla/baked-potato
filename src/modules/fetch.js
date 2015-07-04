@@ -5,7 +5,7 @@
 
 'use strict';
 
-var Promise = require('bluebird');
+var chalk = require('chalk');
 
 var url = require('./url');
 var request = require('./request');
@@ -36,6 +36,9 @@ function menu(restaurant) {
         for (var i = 0; i < items.length; i++) {
           scrap.item(restaurant.uuid, items[i]);
         }
+      })
+      .catch(function (error) {
+        handler(error, 'restaurant', src);
       });
   }
 }
@@ -56,5 +59,21 @@ function listing(page) {
       for (var i = 0; i < items.length; i++) {
         scrap.restaurant(items[i]).then(menu);
       }
+    })
+    .catch(function (error) {
+      handler(error, 'listing', src);
     });
+}
+
+/**
+ * Handles the request errors.
+ *
+ * @private
+ * @param error - error object contains error details and stack.
+ * @param type - either its a menu or a restaurant that is failed to be fetched
+ * @param url - url of the failed request.
+ */
+function handler(error, type, url) {
+  var message = chalk.red('Failed to fetch [{0}]: `{1}`').replace('{0}', type).replace('{1}', url);
+  console.log(message);
 }
