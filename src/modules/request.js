@@ -6,7 +6,7 @@
 'use strict';
 
 var Promise = require('bluebird');
-var request = require('request-promise');
+var request = require('request');
 var cheerio = require('cheerio');
 var chalk = require('chalk');
 
@@ -17,7 +17,7 @@ var chalk = require('chalk');
  * @exports make
  */
 module.exports = {
-    make: make
+  make: make
 };
 
 /**
@@ -29,14 +29,29 @@ module.exports = {
  * @returns {bluebird|exports|module.exports}
  */
 function make(url) {
-    return new Promise(function (resolve, reject) {
-        console.log(chalk.blue('Requesting: ') + chalk.white(url));
+  return new Promise(function (resolve, reject) {
+    console.log(chalk.blue('Requesting: ') + chalk.white(url));
 
-        request(url).then(function (response) {
-            var $ = parseResponse(response);
-            resolve($);
-        }).catch(reject);
+    //  request.debug = true;
+
+    var options = {
+      method: 'GET',
+      url: url,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) ' +
+        'Chrome/43.0.2357.130 Safari/537.36'
+      }
+    };
+    request(options, function (error, response) {
+      if(!error){
+        var $ = parseResponse(response.body);
+        resolve($);
+      }
+      else{
+        reject(error);
+      }
     });
+  });
 }
 
 /**
@@ -47,7 +62,7 @@ function make(url) {
  * @returns {object}
  */
 function parseResponse(response) {
-    return cheerio.load(response, {
-        normalizeWhitespace: true
-    });
+  return cheerio.load(response, {
+    normalizeWhitespace: true
+  });
 }

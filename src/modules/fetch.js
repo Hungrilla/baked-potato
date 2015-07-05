@@ -6,6 +6,7 @@
 'use strict';
 
 var chalk = require('chalk');
+var Promise = require('bluebird');
 
 var url = require('./url');
 var request = require('./request');
@@ -55,10 +56,12 @@ function listing(page) {
   var src = url.getListingUrl(page);
   return request.make(src)
     .then(function ($response) {
+      var q = [];
       var items = $response('#listing-container > article');
       for (var i = 0; i < items.length; i++) {
-        scrap.restaurant(items[i]).then(menu);
+        q.push(scrap.restaurant(items[i]).then(menu));
       }
+      return Promise.all(q);
     })
     .catch(function (error) {
       handler(error, 'listing', src);
