@@ -35,10 +35,11 @@ function restaurant(item) {
   var name = $item('.item-details > .item-title > a').text();
   var rating = $item('.item-details > .item-title > span').data('rating');
   var type = $item('.item-details > .item-meta > .item-address').text();
-
+  var img = $item('.item-pic > a > img').attr('src');
 
   return _restaurant.insert({
     url: url,
+    img: img.replace(/.*?:\/\/cdn.eatoye.pk/g, ''),
     name: name,
     rating: rating,
     type: type
@@ -83,9 +84,7 @@ function item(uuid, html) {
       restaurantId: uuid,
       name: name.trim(),
       type: type.trim(),
-      description: description.trim(),
-      serves: serves.trim(),
-      price: price.trim()
+      description: description.trim()
     }).catch(handler);
 
     array.push(promise);
