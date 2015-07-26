@@ -33,9 +33,11 @@ Promise.all(queue)
 function clean() {
   var restaurant = require('../lib/repositories/restaurant');
   var menu = require('../lib/repositories/menu');
+  var serving = require('../lib/repositories/serving');
 
   restaurant.sync(true);
   menu.sync(true);
+  serving.sync(true);
 }
 
 /**
