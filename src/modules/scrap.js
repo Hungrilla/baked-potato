@@ -39,7 +39,7 @@ function restaurant(item) {
 
   return _restaurant.insert({
     url: url,
-    img: img.replace(/.*?:\/\/cdn.eatoye.pk/g, ""),
+    img: img.replace(/.*?:\/\/cdn.eatoye.pk/g, ''),
     name: name,
     rating: rating,
     type: type
