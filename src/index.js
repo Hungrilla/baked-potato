@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /**
  * Author: Umayr Shahid <umayrr@hotmail.com>,
  * Created: 23:49, 05/06/15.
