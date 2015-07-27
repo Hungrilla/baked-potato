@@ -5,19 +5,37 @@ import pycurl
 import sys
 import os
 
+"""
+Script to download images from `eatoye` cdn.
+
+It uses `MySQLdb` to connect with database & `pycurl` to actually download images from given url so its highly
+recommended you execute `__pyinit.sh` script before executing this script. It'll download all dependencies which is required
+by this script. Cheers!
+"""
+
 
 class downloader:
 
-    TMP_PATH = "./tmp"
-    BASE_URL = "https://cdn.eatoye.pk"
-    USERAGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:8.0) Gecko/20100101 Firefox/8.0"
-    COOKIEFILE = TMP_PATH + "/cookie.txt"
-    QUERY = "SELECT `img` FROM Restaurants"
+    """
+    Encapsulates all functionality to download images from `eatoye` cdn.
+    """
 
-    img_path = ""
-    urls = []
+    __TMP_PATH = "./tmp"
+    __BASE_URL = "https://cdn.eatoye.pk"
+    __USERAGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:8.0) Gecko/20100101 Firefox/8.0"
+    __COOKIEFILE = __TMP_PATH + "/cookie.txt"
+    __QUERY = "SELECT `img` FROM Restaurants"
+
+    __img_path = ""
+    __urls = []
 
     class color:
+
+        """
+        Class to contain all bash color codes that this script uses.
+        Execpt that, this doesn't actually do anything.
+        """
+
         HEADER = "\033[95m"
         OKBLUE = "\033[94m"
         OKGREEN = "\033[92m"
@@ -29,14 +47,38 @@ class downloader:
         UNDERLINE = "\033[4m"
 
     def __init__(self, img_path, host, user, passwd, db):
-        self.img_path = img_path
+        """
+        Instantiate an instance of `downloader` class.
 
-        self.get_urls(host, user, passwd, db)
-        self.create_dir(self.TMP_PATH)
-        self.create_dir(self.img_path)
+        Parameters:
+            img_path - Path where images will be saved after downloading.
+            host - Database host, e.g. localhost.
+            user - Database user.
+            passwd - Database password.
+            db - Name of database.
+        """
+        self.__img_path = img_path
 
-    def download_image(self, url, path):
-        def progress(total_download, downloaded, total_upload, uploaded):
+        self.__get_urls(host, user, passwd, db)
+
+        self.__create_dir(self.__TMP_PATH)
+        self.__create_dir(self.__img_path)
+
+    def __download_image(self, url, path):
+        """
+        Downloads images from a given url.
+
+        Parameters:
+            url - URL to download image from.
+            path - Path where image will be saved once its downloaded.
+
+        Returns:
+            True if image is downloaded successfully else False in case if image is already downloaded.
+        """
+        def __progress(total_download, downloaded, total_upload, uploaded):
+            """
+            Minor callback to display progress on terminal screen.
+            """
             bar_length = 20
             percent = (float(downloaded) / total_download) if total_download != 0 else 0
             hashes = '#' * int(round(percent * bar_length))
@@ -47,48 +89,77 @@ class downloader:
 
         if not os.path.exists(path):
             print self.color.WHITE + "Downloading `%s`:" % url + self.color.ENDC
+
             curl = pycurl.Curl()
-            curl.setopt(pycurl.URL, self.BASE_URL + url)
-            curl.setopt(pycurl.USERAGENT, self.USERAGENT)
-            curl.setopt(pycurl.COOKIEFILE, self.COOKIEFILE)
-            curl.setopt(pycurl.COOKIEJAR, self.COOKIEFILE)
+            curl.setopt(pycurl.URL, self.__BASE_URL + url)
+            curl.setopt(pycurl.USERAGENT, self.__USERAGENT)
+            curl.setopt(pycurl.COOKIEFILE, self.__COOKIEFILE)
+            curl.setopt(pycurl.COOKIEJAR, self.__COOKIEFILE)
             curl.setopt(pycurl.WRITEDATA, file(path, "wb"))
             curl.setopt(pycurl.UPLOAD, 0)
             curl.setopt(pycurl.NOPROGRESS, 0)
-            curl.setopt(pycurl.PROGRESSFUNCTION, progress)
+            curl.setopt(pycurl.PROGRESSFUNCTION, __progress)
             curl.perform()
+
             return True
         else:
             return False
 
-    def create_dir(self, directory):
+    def __create_dir(self, directory):
+        """
+        Creates directory if it doesn't exist.
+
+        Parameters:
+            directory - Name of the directory.
+        """
         if not os.path.exists(directory):
             print self.color.WARNING + "Directory %s not exists, creating." % directory + self.color.ENDC
             os.makedirs(directory)
 
-    def get_urls(self, host, user, passwd, db):
+    def __get_urls(self, host, user, passwd, db):
+        """
+        Fetch all image urls from database.
+
+        Parameters:
+            host - Database host.
+            user - Database user.
+            passwd - Database passwd.
+            db - Database name.
+
+        Raises:
+            MySQLdb.OperationalError - In case if script fails to connect to MySQL database.
+            MySQLdb.ProgrammingError - Raises when something wrong with the query.
+        """
         try:
             db = MySQLdb.connect(host=host, user=user, passwd=passwd, db=db)
             cursor = db.cursor()
-            cursor.execute(self.QUERY)
+            cursor.execute(self.__QUERY)
             for row in cursor.fetchall():
-                self.urls.append(row[0])
+                self.__urls.append(row[0])
+
         except MySQLdb.OperationalError as (code, message):
             print self.color.FAIL + "Error connecting to Database: `%s`\nMessage: `%s`" % (db, message) + self.color.ENDC
             sys.exit(1)
+
         except MySQLdb.ProgrammingError as (code, message):
-            print self.color.FAIL + "Error executing `%s`\nMessage: `%s`" % (self.QUERY, message) + self.color.ENDC
+            print self.color.FAIL + "Error executing `%s`\nMessage: `%s`" % (self.__QUERY, message) + self.color.ENDC
             sys.exit(1)
 
     def fetch(self):
-        for url in self.urls:
-            path = self.img_path + url.split("/")[len(url.split("/")) - 1]
-            if self.download_image(url, path):
+        """
+        Does the actual hardwork in order to download image.
+
+        Iterates over all urls, and download image one by one.
+        """
+        for url in self.__urls:
+            path = self.__img_path + url.split("/")[len(url.split("/")) - 1]
+
+            if self.__download_image(url, path):
                 print self.color.OKGREEN + " Success." + self.color.ENDC
             else:
                 print self.color.FAIL + "Image already exists. (%s)" % path + self.color.ENDC
 
-parser = argparse.ArgumentParser(description="Tiny scripts to read from database.")
+parser = argparse.ArgumentParser(description="Script to download images from `eatoye` cdn.")
 
 parser.add_argument("--host", dest="host", default="localhost", help="Database host.")
 parser.add_argument("--user", dest="user", default="root", help="Username of the provided database host.")
