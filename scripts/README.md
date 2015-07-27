@@ -1,3 +1,9 @@
+### `./test.sh`
+
+Tiny shell script to verify if code contains any `JSHint` or `JSCS` errors.
+
+This script also supposed to execute unit tests if we get time to write them, someday!
+
 ### `./dl.py`
 
 Script to download images from `eatoye` cdn.
